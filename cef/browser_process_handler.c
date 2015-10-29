@@ -8,6 +8,8 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 
+#include <time.h>
+#include <sys/time.h>
 #include <linux/limits.h>
 
 #include "include/capi/cef_app_capi.h"
@@ -37,6 +39,8 @@ static void configurenotify(struct Client *c, const XEvent *e)
 	const XConfigureEvent *ev = &e->xconfigure;
 	XWindowChanges changes = {0};
 
+	DEBUG_PRINT("############ configurenotify ##################")
+
 	if (ev->window == c->win && c->cwin && c->host && c->host->notify_move_or_resize_started) {
 		c->host->notify_move_or_resize_started(c->host);
 		changes.width = ev->width;
@@ -44,6 +48,46 @@ static void configurenotify(struct Client *c, const XEvent *e)
 		XConfigureWindow(c->dpy, c->cwin, CWHeight | CWWidth, &changes);
 	}
 }
+
+const char* XEVENT_NAMES[] =
+{
+"0",
+"1",
+"KeyPress",
+"KeyRelease",
+"ButtonPress",
+"ButtonRelease",
+"MotionNotify",
+"EnterNotify",
+"LeaveNotify",
+"FocusIn",
+"FocusOut",
+"KeymapNotify",
+"Expose",
+"GraphicsExpose",
+"NoExpose",
+"VisibilityNotify",
+"CreateNotify",
+"DestroyNotify",
+"UnmapNotify",
+"MapNotify",
+"MapRequest",
+"ReparentNotify",
+"ConfigureNotify",
+"ConfigureRequest",
+"GravityNotify",
+"ResizeRequest",
+"CirculateNotify",
+"CirculateRequest",
+"PropertyNotify",
+"SelectionClear",
+"SelectionRequest",
+"SelectionNotify",
+"ColormapNotify",
+"ClientMessage",
+"MappingNotify",
+"GenericEvent"
+};
 
 static void *runx(void *arg)
 {
@@ -71,16 +115,33 @@ static void *runx(void *arg)
 	c->vis = XDefaultVisual(c->dpy, c->scr);
 
 	c->attrs.event_mask = 
-		FocusChangeMask | 
-		KeyPressMask |
-		KeyReleaseMask | 
-		ExposureMask |
-		VisibilityChangeMask | 
-		StructureNotifyMask | 
+		Button1MotionMask |
+		Button2MotionMask | 
+		Button3MotionMask |
+		Button4MotionMask |
+		Button5MotionMask |
 		ButtonMotionMask |
-		ButtonPressMask | 
-		ButtonReleaseMask;
-
+		ButtonPressMask |
+		ButtonReleaseMask |
+		ColormapChangeMask |
+		EnterWindowMask |
+		ExposureMask |
+		FocusChangeMask |
+		KeyPressMask |
+		KeyReleaseMask |
+		KeymapStateMask |
+		LeaveWindowMask |
+		OwnerGrabButtonMask |
+		PointerMotionHintMask |
+		PointerMotionMask |
+		PropertyChangeMask |
+		ResizeRedirectMask |
+		StructureNotifyMask |
+		SubstructureNotifyMask |
+//		SubstructureRedirectMask |
+		VisibilityChangeMask
+		;
+		
 	//	if (!(opt_embed && (parent = strtol(opt_embed, NULL, 0))))
 	//		parent = XRootWindow(c->dpy, c->scr);
 	c->win = XCreateWindow(c->dpy, XRootWindow(c->dpy, c->scr), 0, 0, 800, 600,
@@ -105,19 +166,54 @@ static void *runx(void *arg)
 
 	DEBUG_PRINT("browser creation requested");
 
+	const int x11fd = ConnectionNumber(c->dpy);
+
+	// for the timeout of select()
+	struct timeval tv;
+
+	// for checking time using a tickcount
+	const time_t tStart = time(NULL);
+
 	int running = 1;
 	while(running) {
-		XNextEvent(c->dpy, &ev);
+		fd_set x11fdset;
+		FD_ZERO(&x11fdset);
+		FD_SET(x11fd, &x11fdset);
 
-		DEBUG_PRINT("event WINID: %d, %d", c->win, ev.type);
-		if(handler[ev.type]) {
-			(handler[ev.type])(c, &ev);
+		tv.tv_usec = 0;
+		tv.tv_sec = 1;
+
+		if (select(x11fd + 1, &x11fdset, 0, 0, &tv))
+		{
+			XNextEvent(c->dpy, &ev);
+
+			DEBUG_PRINT("window, event: %d, %s", c->win, XEVENT_NAMES[ev.type]);
+			if(handler[ev.type]) {
+				(handler[ev.type])(c, &ev);
+			}
+			if (ev.type == ClientMessage && ev.xclient.data.l[0] == wm_delete_window) {
+				DEBUG_PRINT("destroying window");
+
+				XDestroyWindow(c->dpy, c->win);
+				running = 0;
+			}
 		}
-		if (ev.type == ClientMessage && ev.xclient.data.l[0] == wm_delete_window) {
-			DEBUG_PRINT("destroying window");
-
-			XDestroyWindow(c->dpy, c->win);
-			running = 0;
+		else
+		{
+			// timer tick
+			const time_t tNow = time(NULL);
+			if (difftime(tNow, tStart) > 10.0)
+			{
+				DEBUG_PRINT("second test - XMapWindow");
+				XMapWindow(c->dpy, c->win);
+				XFlush(c->dpy);
+			}
+			else if (difftime(tNow, tStart) > 5)
+			{
+				DEBUG_PRINT("first test - XUnmapWindow");
+				XUnmapWindow(c->dpy, c->win);
+				XFlush(c->dpy);
+			}
 		}
 	}
 	DEBUG_PRINT("exiting X event loop");
