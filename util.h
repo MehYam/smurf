@@ -16,6 +16,7 @@ struct Client {
 	int scr;
 	Visual *vis;
 	Window win;
+	GC gc;
 	Window cwin;
 	XSetWindowAttributes attrs;
 	cef_browser_t *browser;

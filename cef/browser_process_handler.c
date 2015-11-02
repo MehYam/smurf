@@ -102,9 +102,10 @@ static void *runx(void *arg)
 	XEvent ev;
 
 	if (!(c->dpy = XOpenDisplay(NULL)))
+	{
 		die("Can't open display\n");
+	}
 	c->scr = XDefaultScreen(c->dpy);
-	c->vis = XDefaultVisual(c->dpy, c->scr);
 
 	c->attrs.event_mask = 
 		Button1MotionMask |
@@ -133,19 +134,28 @@ static void *runx(void *arg)
 //		SubstructureRedirectMask |
 		VisibilityChangeMask
 		;
-		
-	//	if (!(opt_embed && (parent = strtol(opt_embed, NULL, 0))))
-	//		parent = XRootWindow(c->dpy, c->scr);
-	c->win = XCreateWindow(c->dpy, XRootWindow(c->dpy, c->scr), 0, 0, 800, 600,
-						   0, XDefaultDepth(c->dpy, c->scr), InputOutput,
-						   c->vis, CWEventMask, &c->attrs);
 
+	const int black = BlackPixel(c->dpy, c->scr);
+	const int white = WhitePixel(c->dpy, c->scr);
+	c->win = XCreateSimpleWindow(
+		c->dpy,
+		DefaultRootWindow(c->dpy),
+		0, 0, 1200, 800,
+		0,
+		black,
+		white
+	);		
 	DEBUG_PRINT("WINID: %d", c->win);
+
+	c->gc = XCreateGC(c->dpy, c->win, 0, 0);
+	XSetBackground(c->dpy, c->gc, white);
+	XSetForeground(c->dpy, c->gc, black);
 
 	// request the window closed message so we can exit the thread
 	Atom wm_delete_window = XInternAtom(c->dpy, "WM_DELETE_WINDOW", False);
 	XSetWMProtocols(c->dpy, c->win, &wm_delete_window, 1);
 
+	XClearWindow(c->dpy, c->win);
 	XMapWindow(c->dpy, c->win);
 	XSync(c->dpy, False);
 
@@ -228,6 +238,8 @@ static void *runx(void *arg)
 	}
 	DEBUG_PRINT("exiting X event loop");
 
+	XFreeGC(c->dpy, c->gc);
+	XDestroyWindow(c->dpy, c->win);
 	XCloseDisplay(c->dpy);
 	return NULL;
 }
