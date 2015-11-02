@@ -4,6 +4,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
+
 #include "util.h"
 
 void eprintf(const char *format, ...)
@@ -26,4 +30,22 @@ void die(const char *msg)
 {
 	eprintf("%s", msg);
 	exit(1);
+}
+
+void getHomeDir(char* dest, size_t size)
+{
+	const char* dir = NULL;
+	if ((dir = getenv("HOME")) == NULL)
+	{
+		struct passwd* pw = NULL;
+		if ((pw = getpwuid(getuid())) != NULL)
+		{
+			dir = pw->pw_dir;
+		}
+	}
+	if (dir != NULL)
+	{
+		strncpy(dest, dir, size);
+		dest[size-1] = 0;
+	}
 }

@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <linux/limits.h>
+
 #include "include/capi/cef_app_capi.h"
 #include "include/capi/cef_client_capi.h"
 
@@ -39,14 +41,21 @@ int main(int argc, char** argv)
 	// Application settings.
 	// It is mandatory to set the "size" member.
 	cef_settings_t settings = {};
+	memset(&settings, 0, sizeof(settings));
 	settings.size = sizeof(cef_settings_t);
 //	settings.no_sandbox = 1;
 
-	cef_string_t cefCachePath = {};
-	const char cachePath[] = "~/.cache/Ericsson/MediaFirstUC";
-	cef_string_utf8_to_utf16(cachePath, strlen(cachePath), &cefCachePath);
-	settings.cache_path = cefCachePath;
+	char homeDir[PATH_MAX] = "";
+	getHomeDir(homeDir, LENGTH(homeDir));
 
+	char cachePath[PATH_MAX] = "";
+	strncat(cachePath, homeDir, LENGTH(cachePath));
+	strncat(cachePath, "/.cache/ericsson/mediafirstuc", LENGTH(cachePath));
+
+	DEBUG_PRINT("cache dir '%s'", cachePath);
+	cef_string_utf8_to_utf16(cachePath, strlen(cachePath), &settings.cache_path);
+
+	DEBUG_PRINT("cef string length %d", settings.cache_path.length);
 
 	// Initialize CEF.
 //	printf("cef_initialize\n");
