@@ -42,6 +42,12 @@ int main(int argc, char** argv)
 	settings.size = sizeof(cef_settings_t);
 //	settings.no_sandbox = 1;
 
+	cef_string_t cefCachePath = {};
+	const char cachePath[] = "~/.cache/Ericsson/MediaFirstUC";
+	cef_string_utf8_to_utf16(cachePath, strlen(cachePath), &cefCachePath);
+	settings.cache_path = cefCachePath;
+
+
 	// Initialize CEF.
 //	printf("cef_initialize\n");
 	RINC(app);

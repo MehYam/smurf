@@ -89,6 +89,8 @@ const char* XEVENT_NAMES[] =
 "GenericEvent"
 };
 
+#define LOAD_LOCAL_TEST_FILE 1
+#define RUN_TIMER_TEST 0
 static void *runx(void *arg)
 {
 	DEBUG_PRINT("------------ starting X handling thread --------------");
@@ -96,16 +98,6 @@ static void *runx(void *arg)
 	struct Client *c = (struct Client*)arg;
 	cef_window_info_t windowInfo = {};
 
-	char path[PATH_MAX] = "";
-	getcwd(path, LENGTH(path));
-
-	char url[PATH_MAX] = "file://";
-	strcat(url, path);
-	strcat(url, "/test.html");
-
-	DEBUG_PRINT("loading url %s", url);
-	
-	cef_string_t cefUrl = {};
 	cef_browser_settings_t browserSettings = {.size = sizeof(cef_browser_settings_t)};
 	XEvent ev;
 
@@ -158,10 +150,25 @@ static void *runx(void *arg)
 	XSync(c->dpy, False);
 
 	windowInfo.parent_window = c->win;
-	cef_string_utf8_to_utf16(url, strlen(url), &cefUrl);
 	c->client = init_client();
 
 	RINC(c->client);
+
+	char path[PATH_MAX] = "";
+#if LOAD_LOCAL_TEST_FILE
+	getcwd(path, LENGTH(path));
+
+	char url[PATH_MAX] = "file://";
+	strcat(url, path);
+	strcat(url, "/test.html");
+#else
+#endif
+
+	DEBUG_PRINT("setting url %s", url);
+	
+	cef_string_t cefUrl = {};
+	cef_string_utf8_to_utf16(url, strlen(url), &cefUrl);
+
 	cef_browser_host_create_browser(&windowInfo, c->client, &cefUrl, &browserSettings, NULL);
 
 	DEBUG_PRINT("browser creation requested");
@@ -171,8 +178,10 @@ static void *runx(void *arg)
 	// for the timeout of select()
 	struct timeval tv;
 
+#if RUN_TIMER_TEST
 	// for checking time using a tickcount
 	const time_t tStart = time(NULL);
+#endif
 
 	int running = 1;
 	while(running) {
@@ -200,7 +209,7 @@ static void *runx(void *arg)
 		}
 		else
 		{
-			// timer tick
+#if RUN_TIMER_TEST			
 			const time_t tNow = time(NULL);
 			if (difftime(tNow, tStart) > 10.0)
 			{
@@ -214,6 +223,7 @@ static void *runx(void *arg)
 				XUnmapWindow(c->dpy, c->win);
 				XFlush(c->dpy);
 			}
+#endif			
 		}
 	}
 	DEBUG_PRINT("exiting X event loop");
