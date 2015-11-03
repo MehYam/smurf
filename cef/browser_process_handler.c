@@ -108,30 +108,30 @@ static void *runx(void *arg)
 	c->scr = XDefaultScreen(c->dpy);
 
 	c->attrs.event_mask = 
-		Button1MotionMask |
-		Button2MotionMask | 
-		Button3MotionMask |
-		Button4MotionMask |
-		Button5MotionMask |
-		ButtonMotionMask |
-		ButtonPressMask |
-		ButtonReleaseMask |
-		ColormapChangeMask |
-		EnterWindowMask |
-		ExposureMask |
-		FocusChangeMask |
-		KeyPressMask |
-		KeyReleaseMask |
-		KeymapStateMask |
-		LeaveWindowMask |
-		OwnerGrabButtonMask |
-		PointerMotionHintMask |
-		PointerMotionMask |
-		PropertyChangeMask |
-		ResizeRedirectMask |
-		StructureNotifyMask |
-		SubstructureNotifyMask |
-//		SubstructureRedirectMask |
+		// Button1MotionMask |
+		// Button2MotionMask | 
+		// Button3MotionMask |
+		// Button4MotionMask |
+		// Button5MotionMask |
+		// ButtonMotionMask |
+		// ButtonPressMask |
+		// ButtonReleaseMask |
+		// ColormapChangeMask |
+		// EnterWindowMask |
+		// ExposureMask |
+		// FocusChangeMask |
+		// KeyPressMask |
+		// KeyReleaseMask |
+		// KeymapStateMask |
+		// LeaveWindowMask |
+		// OwnerGrabButtonMask |
+		// PointerMotionHintMask |
+		// PointerMotionMask |
+		// PropertyChangeMask |
+		// ResizeRedirectMask |
+		// StructureNotifyMask |
+		// SubstructureNotifyMask |
+		//SubstructureRedirectMask |
 		VisibilityChangeMask
 		;
 
@@ -146,6 +146,8 @@ static void *runx(void *arg)
 		white
 	);		
 	DEBUG_PRINT("WINID: %d", c->win);
+
+	XSelectInput(c->dpy, c->win, c->attrs.event_mask);
 
 	c->gc = XCreateGC(c->dpy, c->win, 0, 0);
 	XSetBackground(c->dpy, c->gc, white);
