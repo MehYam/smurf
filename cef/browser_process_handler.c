@@ -89,7 +89,7 @@ const char* XEVENT_NAMES[] =
 "GenericEvent"
 };
 
-#define LOAD_LOCAL_TEST_FILE 1
+#define LOAD_LOCAL_TEST_FILE 0
 #define RUN_TIMER_TEST 0
 static void *runx(void *arg)
 {
@@ -164,14 +164,15 @@ static void *runx(void *arg)
 
 	RINC(c->client);
 
-	char path[PATH_MAX] = "";
 #if LOAD_LOCAL_TEST_FILE
+	char path[PATH_MAX] = "";
 	getcwd(path, LENGTH(path));
 
 	char url[PATH_MAX] = "file://";
 	strcat(url, path);
 	strcat(url, "/test.html");
 #else
+	char url[PATH_MAX] = "http://www.w3schools.com/";
 #endif
 
 	DEBUG_PRINT("setting url %s", url);

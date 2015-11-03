@@ -31,9 +31,6 @@ struct Client {
 
 void eprintf(const char *format, ...);
 void die(const char *msg);
-
-// gets the home path for the current user (i.e. "/home/user_name"), returns the size of the string if successful,
-// 0 if otherwise.
 void getHomeDir(char* pszBuffer, size_t size);
 
 #define DEBUG_ONCE(str, args...) do{ static int first_call = 1; if (first_call) { first_call = 0; eprintf("[%05d:%08x](%s:%d)%s(): "str, getpid(), pthread_self(), __FILE__, __LINE__, __func__, ##args); } }while(0)
