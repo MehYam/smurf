@@ -12,6 +12,17 @@
 #include "cef/base.h"
 #include "cef/initializers.h"
 
+void getCachePath(char* dest, size_t length)
+{
+	char homeDir[PATH_MAX] = "";
+	getHomeDir(homeDir, LENGTH(homeDir));
+
+	strncat(dest, homeDir, length);
+	strncat(dest, "/.cache/smurf", length);
+
+	dest[length-1] = 0;
+}
+
 int main(int argc, char** argv)
 {
 	DEBUG_PRINT("----------------- NEW PROCESS -------------------");
@@ -43,22 +54,15 @@ int main(int argc, char** argv)
 	cef_settings_t settings = {};
 	memset(&settings, 0, sizeof(settings));
 	settings.size = sizeof(cef_settings_t);
-//	settings.no_sandbox = 1;
 
-	char homeDir[PATH_MAX] = "";
-	getHomeDir(homeDir, LENGTH(homeDir));
-
+	// activate the cache
 	char cachePath[PATH_MAX] = "";
-	strncat(cachePath, homeDir, LENGTH(cachePath));
-	strncat(cachePath, "/.cache/ericsson/mediafirstuc", LENGTH(cachePath));
+	getCachePath(cachePath, LENGTH(cachePath));
 
-	DEBUG_PRINT("cache dir '%s'", cachePath);
+	DEBUG_PRINT("cache path '%s'", cachePath);
 	cef_string_utf8_to_utf16(cachePath, strlen(cachePath), &settings.cache_path);
 
-	DEBUG_PRINT("cef string length %d", settings.cache_path.length);
-
 	// Initialize CEF.
-//	printf("cef_initialize\n");
 	RINC(app);
 	cef_initialize(&mainArgs, &settings, app, NULL);
 
