@@ -62,6 +62,14 @@ CEF_CALLBACK int has_one_ref(struct _cef_base_t* self)
 	return r->refs == 1;
 }
 
+int get_refcount(struct _cef_base_t* self)
+{
+	char* cp = (char*)self;
+	cp -= sizeof(struct refcount);
+	struct refcount* const r = (struct refcount*)cp;
+	return r->refs;	
+}
+
 int init_base(struct _cef_base_t* self, size_t sz)
 {
 	struct refcount *r;

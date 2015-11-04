@@ -14,7 +14,21 @@
 
 extern struct Client* client_list;
 
-#define LOAD_LOCAL_TEST_FILE 0
+// #undef RDEC
+// #define RDEC(p)
+
+#define LOAD_LOCAL_TEST_FILE 1
+
+void testTask()
+{
+	DEBUG_PRINT("queuing up a test task");
+
+	struct _cef_task_t* const task = init_task(SMURF_TASK_2);
+	DEBUG_PRINT("has one ref----------------------------------------- %d", task->base.has_one_ref((cef_base_t*) task));
+	RINC(task);
+
+	cef_post_task(TID_UI, task);
+}
 
 CEF_CALLBACK void browser_process_handler_on_context_initialized(struct _cef_browser_process_handler_t *self)
 {
@@ -31,6 +45,7 @@ CEF_CALLBACK void browser_process_handler_on_context_initialized(struct _cef_bro
 	memset(c, 0, sizeof(struct Client));
 
 	c->client = init_client();
+	RINC(c->client);
 
 	c->next = client_list;
 	client_list = c;
@@ -58,6 +73,8 @@ CEF_CALLBACK void browser_process_handler_on_context_initialized(struct _cef_bro
 	browserSettings.size = sizeof(browserSettings);
 
 	cef_browser_host_create_browser(&windowInfo, c->client, &cefUrl, &browserSettings, NULL);
+
+	testTask();
 }
 
 CEF_CALLBACK void browser_process_handler_on_before_child_process_launch(struct _cef_browser_process_handler_t *self, struct _cef_command_line_t *command_line)

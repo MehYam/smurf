@@ -8,6 +8,10 @@
 #include "cef/initializers.h"
 #include "util.h"
 
+// #undef RDEC
+// #define RDEC(p)
+#define RDECX(p)
+
 CEF_CALLBACK void render_process_handler_on_render_thread_created(struct _cef_render_process_handler_t *self, struct _cef_list_value_t *extra_info)
 {
 	DEBUG_ONCE("");
@@ -95,7 +99,10 @@ CEF_CALLBACK void render_process_handler_on_focused_node_changed(struct _cef_ren
 	DEBUG_ONCE("");
 	RDEC(browser);
 	RDEC(frame);
-	RDEC(node);
+
+#warning "the reference counting is currently bugged.  If RDECX is replaced with the more proper RDEC below, navigation to clicked links won't work.  I can't confirm that it's ever worked completely correctly"
+	//RDEC(node);
+	RDECX(node);
 }
 
 CEF_CALLBACK int render_process_handler_on_process_message_received(struct _cef_render_process_handler_t *self, struct _cef_browser_t *browser, cef_process_id_t source_process, struct _cef_process_message_t *message)

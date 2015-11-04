@@ -53,9 +53,9 @@ int main(int argc, char** argv)
 	// reference counting. You cannot pass a structure
 	// initialized with zeroes.
 	struct _cef_app_t* const app = init_app();
+	RINC(app);
 
 	// Execute subprocesses.
-	RINC(app);
 	int code = cef_execute_process(&mainArgs, app, NULL);
 	if (code >= 0) {
 		DEBUG_PRINT("-------- cef_execute_process > 0, EXITING");

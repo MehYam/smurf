@@ -10,6 +10,9 @@
 #include "cef/initializers.h"
 #include "util.h"
 
+// #undef RDEC
+// #define RDEC(p)
+
 /*******************************************************************************
  * CLIENT
  ******************************************************************************/
@@ -273,9 +276,10 @@ CEF_CALLBACK void life_span_handler_on_after_created(struct _cef_life_span_handl
 	eprintf("life_span_handler_on_after_created() called, %d instances\n", g_browserInstances);
 
 	if ((c = life_span_handler_parent(self))) {
+		RINC(browser);
+		c->browser = browser;
+
 		// do this to retrieve the XWindow handle
-		
-		// c->browser = browser;
 		// if (browser && browser->get_host) {
 		// 	c->host = browser->get_host(browser);
 		// 	if (c->host && c->host->get_window_handle)

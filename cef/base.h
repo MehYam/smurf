@@ -19,4 +19,6 @@ CEF_CALLBACK int release(struct _cef_base_t* self);
 CEF_CALLBACK int has_one_ref(struct _cef_base_t* self);
 int init_base(struct _cef_base_t* self, size_t sz);
 
+int get_refcount(struct _cef_base_t* self);  // for debugging
+
 #endif

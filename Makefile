@@ -13,6 +13,7 @@ SRC = smurf.c                                      \
       cef/load_handler.c                           \
       cef/keyboard_handler.c                       \
       cef/render_process_handler.c                 \
+      cef/task.c                                   \
       cef/v8handler.c                              \
       cef/stubs/resource_bundle_handler.c          \
 

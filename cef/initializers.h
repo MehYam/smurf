@@ -15,4 +15,8 @@ struct _cef_keyboard_handler_t *init_keyboard_handler();
 struct _cef_life_span_handler_t *init_life_span_handler();
 struct _cef_v8handler_t *init_v8handler();
 
+typedef enum {SMURF_TASK_1, SMURF_TASK_2} smurf_task;
+
+struct _cef_task_t *init_task(smurf_task task);
+
 #endif
