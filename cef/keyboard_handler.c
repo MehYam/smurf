@@ -22,6 +22,7 @@ CEF_CALLBACK int keyboard_handler_on_pre_key_event(struct _cef_keyboard_handler_
 		event->is_system_key,
 		event->focus_on_editable_field
 	);
+	RDEC(browser);
 	return 0;
 }
 
@@ -50,6 +51,7 @@ CEF_CALLBACK int keyboard_handler_on_key_event(struct _cef_keyboard_handler_t *s
 		}
 		lastKeyup = event->character;
 	}	
+	RDEC(browser);
 	return 0;
 }
 

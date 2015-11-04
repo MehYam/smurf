@@ -12,21 +12,25 @@
 CEF_CALLBACK void load_handler_on_loading_state_change(struct _cef_load_handler_t *self, struct _cef_browser_t *browser, int isLoading, int canGoBack, int canGoForward)
 {
 	DEBUG_PRINT("isLoading %d, canGoBack %d, canGoForward %d", isLoading, canGoBack, canGoForward);
+	RDEC(browser);
 }
 
 CEF_CALLBACK void load_handler_on_load_start(struct _cef_load_handler_t *self, struct _cef_browser_t *browser, struct _cef_frame_t *frame)
 {
-	DEBUG_PRINT("")
+	DEBUG_PRINT("");
+	RDEC(browser);
 }
 
 CEF_CALLBACK void load_handler_on_load_end(struct _cef_load_handler_t *self, struct _cef_browser_t *browser, struct _cef_frame_t *frame, int httpStatusCode)
 {
 	DEBUG_PRINT("httpStatusCode %d", httpStatusCode);
+	RDEC(browser);
 }
 
 CEF_CALLBACK void load_handler_on_load_error(struct _cef_load_handler_t *self, struct _cef_browser_t *browser, struct _cef_frame_t *frame, cef_errorcode_t errorCode, const cef_string_t *errorText, const cef_string_t *failedUrl)
 {
 	DEBUG_PRINT("");
+	RDEC(browser);
 }
 
 struct _cef_load_handler_t *init_load_handler()

@@ -189,11 +189,13 @@ struct _cef_client_t *init_client()
 CEF_CALLBACK void focus_handler_on_take_focus(struct _cef_focus_handler_t *self, struct _cef_browser_t *browser, int next)
 {
 	DEBUG_ONCE("");
+	RDEC(browser);
 }
 
 CEF_CALLBACK int focus_handler_on_set_focus(struct _cef_focus_handler_t *self, struct _cef_browser_t *browser, cef_focus_source_t source)
 {
 	DEBUG_ONCE("");
+	RDEC(browser);
 	return 0;
 }
 
@@ -207,6 +209,7 @@ CEF_CALLBACK void focus_handler_on_got_focus(struct _cef_focus_handler_t *self, 
 		(h = browser->get_host(browser)) && h->set_focus) {
 		h->set_focus(h, 1);
 	}
+	RDEC(browser);
 }
 
 struct _cef_focus_handler_t *init_focus_handler()
@@ -256,6 +259,8 @@ struct Client *life_span_handler_parent(struct _cef_life_span_handler_t *self)
 CEF_CALLBACK int life_span_handler_on_before_popup(struct _cef_life_span_handler_t* self, struct _cef_browser_t* browser, struct _cef_frame_t* frame, const cef_string_t* target_url, const cef_string_t* target_frame_name, cef_window_open_disposition_t target_disposition, int user_gesture, const struct _cef_popup_features_t* popupFeatures, struct _cef_window_info_t* windowInfo, struct _cef_client_t** client, struct _cef_browser_settings_t* settings, int* no_javascript_access)
 {
 	DEBUG_ONCE("");
+	RDEC(browser);
+	RDEC(frame);
 	return 0;
 }
 
@@ -275,16 +280,19 @@ CEF_CALLBACK void life_span_handler_on_after_created(struct _cef_life_span_handl
 				c->cwin = c->host->get_window_handle(c->host);
 		}
 	}
+	RDEC(browser);
 }
 
 CEF_CALLBACK int life_span_handler_run_modal(struct _cef_life_span_handler_t *self, struct _cef_browser_t *browser)
 {
 	DEBUG_ONCE("");
+	RDEC(browser);
 	return 0;
 }
 
 CEF_CALLBACK int life_span_handler_do_close(struct _cef_life_span_handler_t *self, struct _cef_browser_t *browser)
 {
+	RDEC(browser);
 	return 0;
 }
 
@@ -299,6 +307,7 @@ CEF_CALLBACK void life_span_handler_on_before_close(struct _cef_life_span_handle
 		DEBUG_PRINT("stopping cef message loop");
 		cef_quit_message_loop();
 	}
+	RDEC(browser);
 }
 
 struct _cef_life_span_handler_t *init_life_span_handler()

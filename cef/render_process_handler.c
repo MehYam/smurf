@@ -21,11 +21,13 @@ CEF_CALLBACK void render_process_handler_on_web_kit_initialized(struct _cef_rend
 CEF_CALLBACK void render_process_handler_on_browser_created(struct _cef_render_process_handler_t *self, struct _cef_browser_t *browser)
 {
 	DEBUG_ONCE("");
+	RDEC(browser);
 }
 
 CEF_CALLBACK void render_process_handler_on_browser_destroyed(struct _cef_render_process_handler_t *self, struct _cef_browser_t *browser)
 {
 	DEBUG_ONCE("");
+	RDEC(browser);
 }
 
 CEF_CALLBACK struct _cef_load_handler_t *render_process_handler_get_load_handler(struct _cef_render_process_handler_t *self)
@@ -37,6 +39,9 @@ CEF_CALLBACK struct _cef_load_handler_t *render_process_handler_get_load_handler
 CEF_CALLBACK int render_process_handler_on_before_navigation(struct _cef_render_process_handler_t *self, struct _cef_browser_t *browser, struct _cef_frame_t *frame, struct _cef_request_t *request, cef_navigation_type_t navigation_type, int is_redirect)
 {
 	DEBUG_ONCE("");
+	RDEC(browser);
+	RDEC(frame);
+	RDEC(request);
 	return 0;
 }
 
@@ -63,28 +68,41 @@ CEF_CALLBACK void render_process_handler_on_context_created(
 
 	cef_string_userfree_free(cefFunctionName);
 
-	//KAI: release any other references like windowObject?
-	//KAI: use RINC, RDEC, examples in app.c?
+	RDEC(browser);
+	RDEC(frame);
+	RDEC(context);
 }
 
 CEF_CALLBACK void render_process_handler_on_context_released(struct _cef_render_process_handler_t *self, struct _cef_browser_t *browser, struct _cef_frame_t *frame, struct _cef_v8context_t *context)
 {
 	DEBUG_ONCE("");
+	RDEC(browser);
+	RDEC(frame);
+	RDEC(context);
 }
 
 CEF_CALLBACK void render_process_handler_on_uncaught_exception(struct _cef_render_process_handler_t *self, struct _cef_browser_t *browser, struct _cef_frame_t *frame, struct _cef_v8context_t *context, struct _cef_v8exception_t *exception, struct _cef_v8stack_trace_t *stackTrace)
 {
 	DEBUG_ONCE("");
+	RDEC(browser);
+	RDEC(frame);
+	RDEC(context);
+	RDEC(stackTrace);
 }
 
 CEF_CALLBACK void render_process_handler_on_focused_node_changed(struct _cef_render_process_handler_t *self, struct _cef_browser_t *browser, struct _cef_frame_t *frame, struct _cef_domnode_t *node)
 {
 	DEBUG_ONCE("");
+	RDEC(browser);
+	RDEC(frame);
+	RDEC(node);
 }
 
 CEF_CALLBACK int render_process_handler_on_process_message_received(struct _cef_render_process_handler_t *self, struct _cef_browser_t *browser, cef_process_id_t source_process, struct _cef_process_message_t *message)
 {
 	DEBUG_ONCE("");
+	RDEC(browser);
+	RDEC(message);
 	return 0;
 }
 

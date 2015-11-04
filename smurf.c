@@ -22,9 +22,21 @@ void getCachePath(char* dest, size_t length)
 
 	dest[length-1] = 0;
 }
-
+int XErrorHandlerImpl(Display *display, XErrorEvent *event)
+{
+	DEBUG_PRINT("X error type %d, serial %d, error_code %d, request_code %d, minor_code %d", event->type, event->serial, event->error_code, event->request_code, event->minor_code);
+	return 0;
+}
+int XIOErrorHandlerImpl(Display *display)
+{
+	return 0;
+}
 int main(int argc, char** argv)
 {
+	// Install xlib error handlers so that the application won't be terminated on non-fatal errors.
+	XSetErrorHandler(XErrorHandlerImpl);
+	XSetIOErrorHandler(XIOErrorHandlerImpl);
+
 	DEBUG_PRINT("----------------- NEW PROCESS -------------------");
 	for (int i = 0; i < argc; ++i) {
 		DEBUG_PRINT("%s ", argv[i]);

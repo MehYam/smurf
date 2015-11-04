@@ -1,6 +1,7 @@
 #ifndef _SMURF_UTIL_H
 #define _SMURF_UTIL_H
 
+#include <assert.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <pthread.h>
@@ -26,6 +27,11 @@ struct Client {
 	pthread_t thread;
 	struct Client *next;
 };
+
+#define CEF_REQUIRE_UI_THREAD()       assert(cef_currently_on(TID_UI));
+#define CEF_REQUIRE_IO_THREAD()       assert(cef_currently_on(TID_IO));
+#define CEF_REQUIRE_FILE_THREAD()     assert(cef_currently_on(TID_FILE));
+#define CEF_REQUIRE_RENDERER_THREAD() assert(cef_currently_on(TID_RENDERER));
 
 #define INJECTED_JS_FUNCTION_NAME "nativeFunction"
 

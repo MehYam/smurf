@@ -18,6 +18,8 @@ extern struct Client* client_list;
 
 CEF_CALLBACK void browser_process_handler_on_context_initialized(struct _cef_browser_process_handler_t *self)
 {
+	CEF_REQUIRE_UI_THREAD();
+
 	struct Client *c;
 
 	DEBUG_ONCE("");

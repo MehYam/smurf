@@ -42,7 +42,6 @@ CEF_CALLBACK int v8handler_execute(
 	cef_string_userfree_free(cefFunctionName);
 
 	//KAI: fill in retval - have to increment its refcount?
-
 	//KAI: clean up all references
 	return 1;
 }
