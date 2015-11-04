@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <X11/Xlib.h>
+
 #include <linux/limits.h>
 
 #include "include/capi/cef_app_capi.h"

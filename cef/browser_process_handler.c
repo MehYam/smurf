@@ -28,6 +28,9 @@ CEF_CALLBACK void browser_process_handler_on_context_initialized(struct _cef_bro
 		eprintf("calloc failed:");
 		return;
 	}
+	memset(c, 0, sizeof(struct Client));
+
+	c->client = init_client();
 
 	c->next = client_list;
 	client_list = c;
