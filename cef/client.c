@@ -57,6 +57,12 @@ CEF_CALLBACK struct _cef_drag_handler_t *client_get_drag_handler(struct _cef_cli
 	return NULL;
 }
 
+CEF_CALLBACK struct _cef_find_handler_t *client_get_find_handler(struct _cef_client_t *self)
+{
+	DEBUG_ONCE("");
+	return NULL;
+}
+
 CEF_CALLBACK struct _cef_focus_handler_t *client_get_focus_handler(struct _cef_client_t *self)
 {
 	static struct _cef_focus_handler_t *foch = NULL;
@@ -168,6 +174,7 @@ struct _cef_client_t *init_client()
 	// callbacks
 	ret->get_life_span_handler = &client_get_life_span_handler;
 	ret->get_keyboard_handler = &client_get_keyboard_handler;
+	ret->get_find_handler = &client_get_find_handler;
 	ret->get_dialog_handler = &client_get_dialog_handler;
 	ret->get_load_handler = &client_get_load_handler;
 	ret->get_render_handler = &client_get_render_handler;

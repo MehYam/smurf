@@ -1,4 +1,4 @@
-// Copyright (c) 2013 Marshall A. Greenblatt. All rights reserved.
+// Copyright (c) 2015 Marshall A. Greenblatt. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -34,45 +34,35 @@
 // tools directory for more information.
 //
 
-#ifndef CEF_INCLUDE_CEF_DRAG_HANDLER_H_
-#define CEF_INCLUDE_CEF_DRAG_HANDLER_H_
+#ifndef CEF_INCLUDE_CEF_FIND_HANDLER_H_
+#define CEF_INCLUDE_CEF_FIND_HANDLER_H_
 #pragma once
 
 #include "include/cef_base.h"
-#include "include/cef_drag_data.h"
 #include "include/cef_browser.h"
 
 ///
-// Implement this interface to handle events related to dragging. The methods of
-// this class will be called on the UI thread.
+// Implement this interface to handle events related to find results. The
+// methods of this class will be called on the UI thread.
 ///
 /*--cef(source=client)--*/
-class CefDragHandler : public virtual CefBase {
+class CefFindHandler : public virtual CefBase {
  public:
-  typedef cef_drag_operations_mask_t DragOperationsMask;
-
   ///
-  // Called when an external drag event enters the browser window. |dragData|
-  // contains the drag event data and |mask| represents the type of drag
-  // operation. Return false for default drag handling behavior or true to
-  // cancel the drag event.
-  ///
-  /*--cef()--*/
-  virtual bool OnDragEnter(CefRefPtr<CefBrowser> browser,
-                           CefRefPtr<CefDragData> dragData,
-                           DragOperationsMask mask) { return false; }
-
-  ///
-  // Called whenever draggable regions for the browser window change. These can
-  // be specified using the '-webkit-app-region: drag/no-drag' CSS-property. If
-  // draggable regions are never defined in a document this method will also
-  // never be called. If the last draggable region is removed from a document
-  // this method will be called with an empty vector.
+  // Called to report find results returned by CefBrowserHost::Find().
+  // |identifer| is the identifier passed to Find(), |count| is the number of
+  // matches currently identified, |selectionRect| is the location of where the
+  // match was found (in window coordinates), |activeMatchOrdinal| is the
+  // current position in the search results, and |finalUpdate| is true if this
+  // is the last find notification.
   ///
   /*--cef()--*/
-  virtual void OnDraggableRegionsChanged(
-      CefRefPtr<CefBrowser> browser,
-      const std::vector<CefDraggableRegion>& regions) {}
+  virtual void OnFindResult(CefRefPtr<CefBrowser> browser,
+                            int identifier,
+                            int count,
+                            const CefRect& selectionRect,
+                            int activeMatchOrdinal,
+                            bool finalUpdate) {}
 };
 
-#endif  // CEF_INCLUDE_CEF_DRAG_HANDLER_H_
+#endif  // CEF_INCLUDE_CEF_FIND_HANDLER_H_

@@ -19,7 +19,10 @@ SRC = smurf.c                                      \
 
 OBJ = ${SRC:.c=.o}
 
-all: options smurf.d
+all: testfile options smurf.d
+
+testfile:
+	@cp test.html bin/debug/test.html
 
 options:
 	@echo smurf build options:
@@ -53,6 +56,6 @@ clean:
 
 run: smurf.d
 	@echo running debug version
-	@bin/debug/smurf.d
+	@cd bin/debug;./smurf.d;
 
 .PHONY: all options smurf.d smurf.r clean run
